@@ -1,0 +1,14 @@
+package ru.dmitriev.NauJavaSpring.repository;
+
+import ru.dmitriev.NauJavaSpring.entity.Reminder;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
+
+public interface ReminderRepository extends CrudRepository<Reminder, Long> {
+
+    // Метод поиска напоминаний по ID пользователя через связанную сущность Event
+    @Query("SELECT r FROM Reminder r WHERE r.event.user.userId = :userId")
+    List<Reminder> findRemindersByUserId(@Param("userId") Long userId);
+}
