@@ -1,5 +1,6 @@
 package ru.dmitriev.NauJavaSpring.repository;
 
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import ru.dmitriev.NauJavaSpring.entity.Event;
 import ru.dmitriev.NauJavaSpring.entity.Reminder;
 import org.springframework.data.repository.CrudRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
 
+@RepositoryRestResource
 public interface ReminderRepository extends CrudRepository<Reminder, Long>, ReminderCustomRepository {
 
     // Метод поиска напоминаний по ID пользователя через связанную сущность Event
