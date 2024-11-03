@@ -1,17 +1,15 @@
 package ru.dmitriev.NauJavaSpring.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import ru.dmitriev.NauJavaSpring.repository.UserRepository;
 import ru.dmitriev.NauJavaSpring.entity.User;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/users")
+@Controller
 public class UserController {
 
     private final UserRepository userRepository;
@@ -21,8 +19,10 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/findByName")
-    public List<User> getUsersByName(@RequestParam String name) {
-        return userRepository.findByName(name);
+    @GetMapping("/users")
+    public String getUsers(Model model) {
+        List<User> users = (List<User>) userRepository.findAll();
+        model.addAttribute("users", users);
+        return "users";
     }
 }
