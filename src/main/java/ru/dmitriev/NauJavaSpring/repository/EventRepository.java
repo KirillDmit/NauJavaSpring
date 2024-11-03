@@ -12,4 +12,6 @@ public interface EventRepository extends CrudRepository<Event, Long>, EventCusto
 
     // Метод поиска событий в заданном временном диапазоне и по названию
     List<Event> findByEventTimeBetweenAndTitle(LocalDateTime startTime, LocalDateTime endTime, String title);
+
+    List<Event> findEventsByTitle(String title);
 }
