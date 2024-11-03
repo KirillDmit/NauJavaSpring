@@ -1,46 +1,45 @@
 package ru.dmitriev.NauJavaSpring.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import ru.dmitriev.NauJavaSpring.dto.EventRepository;
+import ru.dmitriev.NauJavaSpring.repository.EventRepositoryImpl;
 import ru.dmitriev.NauJavaSpring.entity.Event;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Service
 public class EventServiceImpl implements EventService{
 
-    private final EventRepository eventRepository;
+    private final EventRepositoryImpl eventRepositoryImpl;
 
     @Autowired
-    public EventServiceImpl(EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
+    public EventServiceImpl(EventRepositoryImpl eventRepositoryImpl) {
+        this.eventRepositoryImpl = eventRepositoryImpl;
     }
 
     @Override
-    public void createEvent(Long id, Date date) {
+    public void createEvent(Long id, LocalDateTime date) {
         Event newEvent = new Event();
-        newEvent.setId(id);
-        newEvent.setDate(date);
-        eventRepository.create(newEvent);
+        newEvent.setEventId(id);
+        newEvent.setEventTime(date);
+        eventRepositoryImpl.create(newEvent);
     }
 
     @Override
     public Event findById(Long id) {
-        return eventRepository.read(id);
+        return eventRepositoryImpl.read(id);
     }
 
     @Override
     public void deleteById(Long id) {
-        eventRepository.delete(id);
+        eventRepositoryImpl.delete(id);
     }
 
     @Override
-    public void updateDate(Long id, Date newDate) {
+    public void updateDate(Long id, LocalDateTime newDate) {
         Event event = new Event();
-        event.setId(id);
-        event.setDate(newDate);
-        eventRepository.update(event);
+        event.setEventId(id);
+        event.setEventTime(newDate);
+        eventRepositoryImpl.update(event);
     }
 }
