@@ -1,0 +1,1 @@
+GET http://localhost:8080/users/findByName?name=087d031e-1761-4027-b13a-92e19be8cc68
