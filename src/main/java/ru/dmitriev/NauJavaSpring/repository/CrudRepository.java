@@ -1,4 +1,4 @@
-package ru.dmitriev.NauJavaSpring.dto;
+package ru.dmitriev.NauJavaSpring.repository;
 
 public interface CrudRepository<T, ID>
 {

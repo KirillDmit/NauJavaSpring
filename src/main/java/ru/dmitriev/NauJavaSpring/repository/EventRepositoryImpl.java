@@ -1,4 +1,4 @@
-package ru.dmitriev.NauJavaSpring.dto;
+package ru.dmitriev.NauJavaSpring.repository;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 import ru.dmitriev.NauJavaSpring.entity.Event;
 
 @Component
-public class EventRepository implements CrudRepository<Event, Long>
+public class EventRepositoryImpl implements CrudRepository<Event, Long>
 {
     private final List<Event> eventContainer;
     @Autowired
-    public EventRepository(List<Event> eventContainer)
+    public EventRepositoryImpl(List<Event> eventContainer)
     {
         this.eventContainer = eventContainer;
     }
