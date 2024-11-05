@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Отчет</title>
+</head>
+<body>
+<h1>Отчет о статистике</h1>
+<p>Количество зарегистрированных пользователей: <span th:text="${userCount}"></span></p>
+
+<h2>Список событий</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Название события</th>
+    <th>Дата</th>
+    <th>Описание</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="event : ${events}">
+    <td th:text="${event.title}"></td>
+    <td th:text="${event.eventTime}"></td>
+    <td th:text="${event.description}"></td>
+  </tr>
+  </tbody>
+</table>
+
+<p>Время на получение количества пользователей: <span th:text="${usersTime}"></span> мс</p>
+<p>Время на получение списка событий: <span th:text="${eventsTime}"></span> мс</p>
+<p>Общее время формирования отчета: <span th:text="${totalTime}"></span> мс</p>
+</body>
+</html>
