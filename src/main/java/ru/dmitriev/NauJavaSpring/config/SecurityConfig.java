@@ -3,8 +3,10 @@ package ru.dmitriev.NauJavaSpring.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,10 +14,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import ru.dmitriev.NauJavaSpring.handler.CustomAuthenticationSuccessHandler;
 import ru.dmitriev.NauJavaSpring.services.CustomUserDetailsService;
 
 @Configuration
@@ -24,10 +26,12 @@ import ru.dmitriev.NauJavaSpring.services.CustomUserDetailsService;
 public class SecurityConfig {
 
     private final CustomUserDetailsService  userDetailsService;
+    private final CustomAuthenticationSuccessHandler successHandler;
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService  userDetailsService) {
+    public SecurityConfig(@Lazy CustomUserDetailsService  userDetailsService, CustomAuthenticationSuccessHandler successHandler) {
         this.userDetailsService = userDetailsService;
+        this.successHandler = successHandler;
     }
 
     @Bean
@@ -39,13 +43,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        return authenticationManagerBuilder.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -58,7 +65,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
@@ -66,14 +73,20 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .failureUrl("/login?error=true") // Перенаправление при ошибке входа
+                        .successHandler(successHandler)
+                        .defaultSuccessUrl("/users", true) // Перенаправление после успешного входа
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true") // URL перенаправления после выхода
                         .permitAll()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) ->
                                 response.sendRedirect("/login")
                         )
-                )
-                .logout(LogoutConfigurer::permitAll
                 );
 
         http.authenticationProvider(authenticationProvider());

@@ -13,6 +13,10 @@
         <p style="color:red;">Invalid username or password.</p>
     </div>
 
+    <div th:if="${param.logout}">
+        Вы успешно вышли из системы!
+    </div>
+
     <form th:action="@{/login}" method="post">
         <div class="form-group">
             <label for="name">Username:</label>
